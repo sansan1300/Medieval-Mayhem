@@ -497,7 +497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8271d51702ded845b74269634971216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSpawner
-  unitPrefab: {fileID: 3876550268751311231, guid: ea89e51dc545d334ebabac564ca564be, type: 3}
+  unitPrefab: {fileID: 3876550268751311231, guid: f2bc4210a269a0d4e909f08f21c5ee1c, type: 3}
   spawnPoint: {fileID: 1737541926}
   target: {fileID: 2070450740}
   spawnInterval: 3
