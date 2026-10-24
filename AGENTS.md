@@ -17,6 +17,7 @@ A parent-and-son Unity learning project. Keep changes small, understandable, and
 - Never hand-edit generated folders: `Library/`, `Temp/`, `Obj/` or `obj/`, `Logs/`, `UserSettings/`, build output, IDE caches, generated `.csproj` or `.sln` files. Never use cached/generated files as the source of truth or delete them as a routine fix.
 - Preserve `.meta` files and GUIDs. Move/rename assets with their metadata, preferably in Unity. Include Unity-generated metadata with new assets under `Assets/`; do not regenerate IDs to conceal missing references.
 - Prefer Unity for scene/prefab wiring. If serialized text must change, make a narrow edit and verify references in the editor. Avoid reserializing unrelated assets.
+- Coordinate who is editing each scene or prefab before starting; avoid simultaneous edits to the same asset. Pull before starting when the working tree is clean. Before pushing, fetch and integrate remote changes, resolving any conflicts without overwriting another collaborator's work.
 - Keep handoff notes in root `docs/` outside `Assets/`. Do not add documentation metadata there.
 - Check for missing scripts, prefabs, and baked navigation before extending this checkout. Recover original files with their metadata where possible; do not silently recreate tutorial code or invent matching GUIDs.
 

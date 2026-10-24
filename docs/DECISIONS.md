@@ -34,10 +34,21 @@ Append significant decisions as the project evolves. Include date, status, reaso
 - Reason: Unrelated upgrades or GUID changes would make a learning prototype harder to debug.
 - Consequence: No upgrades, generated-folder edits, or broad scene rewrites as incidental cleanup. Documentation stays outside Assets.
 
+## D005 — Coordinate scene and prefab editing
+
+- Date: 2026-10-25
+- Status: Accepted — user direction
+- Decision: Agree who edits each scene or prefab and avoid simultaneous edits to the same asset. Pull before starting with a clean working tree; fetch and integrate remote changes before pushing.
+- Reason: Unity scene and prefab conflicts are difficult to resolve safely in a learning project.
+- Consequence: Preserve both collaborators' work during integration; do not overwrite another person's changes to resolve a conflict.
+
+## Resolved repository maintenance
+
+- 2026-10-25: Prototype scene metadata committed in `0fcfc32`; `.gitignore` converted to UTF-8 in `1ba394f` with its rules preserved. Generated Unity/IDE files were verified ignored, and both changes were pushed to `origin/main`.
+
 ## Open decisions
 
 - Player-control style and shared-device/local versus online multiplayer.
 - Final 2–4-player elimination/win conditions, including how eliminated villages behave.
 - Unit roster, stats, purchase costs, income tick rate, upgrade costs, and balance.
 - Recovery source for missing tutorial assets; reconstruct only as a separately scoped task if originals cannot be recovered.
-- Separate maintenance task for UTF-8 `.gitignore` conversion and deliberate inclusion of the untracked prototype scene metadata.

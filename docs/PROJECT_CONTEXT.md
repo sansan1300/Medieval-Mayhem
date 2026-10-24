@@ -46,7 +46,9 @@ Treat spawning, movement, unit health, and auto-combat as tutorial-reported and 
 
 No existing AGENTS.md or project Markdown guidance was found in the inspected project, or AGENTS.md in its ancestor directories. These documents establish the initial working context.
 
-At inspection, Git had no tracked modifications, but showed untracked generated/IDE folders and files, plus `Assets/Scenes/Prototype_SpawningAndPathfinding.unity.meta`. Preserve that scene metadata. `.gitignore` is UTF-16 little-endian with CRLF, and intended ignore rules are not taking effect for these generated files. A separate maintenance change can convert it to UTF-8 after preserving its rules; this documentation task does not modify it or clean/stage anything.
+At initial inspection on 2026-10-25, Git showed untracked generated/IDE files and prototype scene metadata. Repository maintenance resolved these issues the same day: commit `0fcfc32` preserved `Assets/Scenes/Prototype_SpawningAndPathfinding.unity.meta`, and commit `1ba394f` converted `.gitignore` from UTF-16 to UTF-8 while preserving its rules. Git ignore checks confirmed the generated Unity/IDE files are now ignored. These changes were pushed to `origin/main`; they do not verify gameplay.
+
+Coordinate scene and prefab editing so only one collaborator edits a given asset at a time. Pull before starting with a clean working tree, and fetch and integrate remote changes before pushing. Preserve both collaborators' work when resolving conflicts.
 
 ## Reopening and proving the baseline
 
