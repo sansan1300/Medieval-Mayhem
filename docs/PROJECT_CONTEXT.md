@@ -6,7 +6,7 @@ Source inspection and Play Mode verification: 2026-10-25. The recovered tutorial
 
 Made by a parent and son, with beginner-friendly, incremental Unity learning as a priority. The intended game supports 2–4 players, each owning a village. Players spend gold on units with different costs and stats and send them against opposing villages. Upgradeable village buildings generate income, creating a choice between economic investment and immediate military strength.
 
-The player-control style, local/online multiplayer format, unit roster, balance values, and final win rules remain open. Starter Assets being installed does not decide the final control scheme.
+Third-person exploration is now a tested local prototype on `world-exploration`; it does not settle the final player-control or multiplayer format. Unit roster, balance values, and final win rules remain open.
 
 ## Verified environment
 
@@ -27,6 +27,7 @@ The player-control style, local/online multiplayer format, unit roster, balance 
 - Recovered gameplay source: `Assets/Scripts/Spawning/UnitSpawner.cs` and `Assets/Scripts/Units/UnitController.cs`. Soldier prefabs: `Assets/Prefabs/Units/Basic_Soldier_Player1.prefab` and `Basic_Soldier_Player2.prefab`, tagged `Player1` and `Player2` respectively.
 - `ProjectSettings/TagManager.asset` defines `Player1` and `Player2` tags. Village objects themselves are saved as `Untagged`.
 - `Assets/Scenes/SampleScene.unity` also exists. `ProjectSettings/EditorBuildSettings.asset` enables only SampleScene, not the prototype.
+- On `world-exploration`, the same prototype scene contains a `WorldExploration` prefab instance. It adds a team-owned third-person observer and separate follow camera, with F5 switching back to the original camera. The player is a variant of Starter Assets `PlayerArmature`, retains the `Player` tag, and is not a soldier combat target. See [controls, assignments, and verification](WORLD_EXPLORATION.md).
 
 ## Recovered source and remaining limits
 
@@ -39,9 +40,9 @@ The initial checkout was missing the tutorial gameplay files. Recovery branch `s
 | Player 2 unit prefab | `f2bc4210a269a0d4e909f08f21c5ee1c` |
 | Baked NavMesh data | `121e6e81f7ae6a04cb1417ecefac2f20` |
 
-Spawning, movement, unit health loss, and removal after damage were observed in Play Mode as recorded below. The current `UnitController` revision bounds enemy searches and chases to `enemyChaseRange` (default 8), resumes the village destination after combat, and gives the village priority within `villagePriorityRange` (default 8). It attacks an opposing `VillageHealth` objective within `villageAttackRange` (default 1.5) of the village collider surface and skips friendly villages by comparing `ownerTag` with the soldier's tag. These recent changes have not been verified in Unity Play Mode.
+Spawning, movement, unit health loss, and removal after damage were observed in Play Mode as recorded below. The current `UnitController` revision bounds enemy searches and chases to `enemyChaseRange` (default 8), resumes the village destination after combat, and gives the village priority within `villagePriorityRange` (default 8). It attacks an opposing `VillageHealth` objective within `villageAttackRange` (default 1.5) of the village collider surface and skips friendly villages by comparing `ownerTag` with the soldier's tag. Basic unit combat and unobstructed village damage were observed in the combined Play Mode check below; chase/reacquisition edge cases remain unverified.
 
-Village health/destruction, purchases, gold income, building upgrades, and match completion were not implemented in the recovered baseline. A `VillageHealth` component is now attached to both prototype villages; each has 500 starting health and a damage method that destroys the village at zero. Soldier attacks are connected to that component in source. Soldiers and villages now create world-space health bars that follow them and update when damaged. The new village combat and health bar behavior has not been opened or verified in Unity yet. Multiplayer is not implemented in the inspected project: Multiplayer Center is declared, but that tooling package is not a playable network session or player ownership system.
+Village health/destruction, purchases, gold income, building upgrades, and match completion were not implemented in the recovered baseline. A `VillageHealth` component is now attached to both prototype villages; each has 500 starting health and a damage method that destroys the village at zero. Soldier attacks are connected to that component in source. Soldiers and villages now create world-space health bars that follow them and update when damaged. Both sides damaged opposing villages in controlled Play Mode checks, and health bars switched between the exploration and overview cameras. Destruction at zero health and match-end behavior remain unverified. Multiplayer is not implemented in the inspected project: Multiplayer Center is declared, but that tooling package is not a playable network session or player ownership system.
 
 One asset dependency remains unresolved in source: material GUID `31321ba15b8f8eb4c954353edc038b1d`, referenced by ground, villages, and both soldier prefabs, has no matching metadata under `Assets/`. The scene renders and gameplay ran without warnings/errors, but its original material/appearance is not verified. Recover that material and any dependencies from the working computer; do not invent a replacement GUID.
 
@@ -83,3 +84,15 @@ At that time, source checks confirmed the four referenced GUIDs had no matching 
 - The scene metadata conflict was resolved by retaining the working computer's original scene GUID `15da031916ef0a544a75dafdd9524ade`. No source references to the Mac-generated scene GUID `4a2b7ea8831304c7598c6b8dcf692622` were found under `Assets/`, `ProjectSettings/`, or `Packages/` before replacement. No duplicate GUIDs were found under `Assets/` after recovery.
 
 The tutorial spawning/movement/combat baseline is observed working on this Mac. Original material appearance, an unobstructed soldier reaching a village without defenders, bounded chasing and resuming the village objective, village damage, friendly-fire edge cases, Windows behavior, and builds remain untested or unimplemented. The missing material is still a recovery follow-up; milestone 1 acceptance has not been met.
+
+## World exploration check — 2026-10-25
+
+On branch `world-exploration`, the shared scene passed 29 temporary runtime checks over approximately 43 simulated seconds in Unity 6000.4.6f1 on macOS. These covered both team spawns/colours, keyboard walking/sprinting/jumping/landing, mouse-input camera rotation, cursor release, F5 and Inspector camera toggles, component disable/re-enable, soldier collision exclusion, and existing spawning/movement/damage/removal for both AI sides. Zero runtime warnings/errors were captured; stopping Play Mode left zero soldiers. The imported assets, existing battlefield objects, AI scripts, physics settings, and packages were not changed. Temporary tools were removed; see [the handoff](WORLD_EXPLORATION.md#verification--2026-10-25) for the method and remaining limits.
+
+## Integration with latest main — 2026-10-25
+
+Rebased `world-exploration` onto main `04d0e53`, which includes village health/destruction, revised soldier objective combat, and world-space health bars. Preserved the uncommitted exploration scripts/prefabs and restored the shared scene by retaining both the upstream village components and the exploration prefab instance. The initial exploration Play Mode evidence above predates these incoming changes. A later combined check is recorded below; post-destruction behavior remains unverified.
+
+## Combined exploration/village verification — 2026-10-25
+
+In Unity 6000.4.6f1 on macOS, a 38-second smoke run confirmed both teams' exploration spawns/movement, AI spawning/unit damage, NavMesh placement, and active-camera health-bar switching. Neither village lost health in that balanced battle. A subsequent 46-second run passed 16 checks, including separate unobstructed attacks by each team's soldier after temporarily stopping spawners/removing defenders in Play Mode. Each soldier reached and damaged the opposing village within 12 seconds. No runtime warnings/errors were captured, and stopping Play Mode restored zero soldiers and the saved scene. Temporary test assets were removed. `WorldHealthBar` now reacquires the active camera when its previous camera is inactive, including its Canvas camera reference. See [the integration notes](WORLD_EXPLORATION.md#combined-integration-check--2026-10-25). Full village-destruction/match-end acceptance and Windows/build checks remain open.
