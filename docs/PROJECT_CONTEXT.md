@@ -22,7 +22,7 @@ The player-control style, local/online multiplayer format, unit roster, balance 
 ## What is actually in this checkout
 
 - `Assets/Scenes/Prototype_SpawningAndPathfinding.unity`: two village objects (`Village_Player1`, `Village_Player2`), two spawn points (`SpawnPoint_Player1`, `SpawnPoint_Player2`), `Player1Spawner`, `Player2Spawner`, ground, camera, and light.
-- Both spawners serialize a `UnitSpawner` component, a spawn point, an opposing village target, a prefab reference, and `spawnInterval: 3`. These are saved fields; executable spawning is not verified.
+- Both spawners serialize a `UnitSpawner` component, a spawn point, an opposing village target, a prefab reference, and `spawnInterval: 3`. These are saved fields; the editor shows missing scripts and neither side spawned units in the Play Mode check below.
 - Ground serializes a `Unity.AI.Navigation.NavMeshSurface` and a baked NavMesh data reference. The referenced data asset could not be found under `Assets/`.
 - `ProjectSettings/TagManager.asset` defines `Player1` and `Player2` tags. Village objects themselves are saved as `Untagged`.
 - `Assets/Scenes/SampleScene.unity` also exists. `ProjectSettings/EditorBuildSettings.asset` enables only SampleScene, not the prototype.
@@ -57,4 +57,15 @@ Coordinate scene and prefab editing so only one collaborator edits a given asset
 3. Inspect Console and both spawners for missing scripts/prefabs. Recover original scripts, prefabs, and navigation data together with their `.meta` files before testing or extending behavior. If recovery is impossible, agree on a small reconstruction task.
 4. Once repaired, test both sides spawning and moving to the opposing village, then unit combat. Record observed results here.
 
-Only filesystem, package/settings, scene serialization, and Git checks were performed for this snapshot. Unity was not opened; compilation, navigation, combat, and builds were not tested.
+## Play Mode baseline check — 2026-10-25
+
+Result: failed baseline acceptance; the scene opens and enters Play Mode but does not spawn units.
+
+- Tested `Assets/Scenes/Prototype_SpawningAndPathfinding.unity` in Unity 6000.4.6f1 on macOS.
+- Selected `Player1Spawner` and `Player2Spawner`: both Inspectors show `Missing (Mono Script)` for `Assembly-CSharp::UnitSpawner`.
+- Selected `Ground`: its `NavMesh Surface` component shows `Missing (Nav Mesh Data)`.
+- Entered Play Mode and observed for more than 12 seconds, exceeding several saved three-second spawn intervals. Neither side added unit objects to the Hierarchy; Game view remained ground and sky with no units observed.
+- Console showed two warnings, both `The referenced script (Unknown) on this Behaviour is missing!`, and zero errors. Entering Play Mode was not blocked by a compilation error; no separate clean compilation or build was run.
+- Stopped Play Mode and confirmed the editor returned to edit mode. No scene, prefab, script, or navigation changes were made.
+
+Source checks also reconfirmed that the four referenced GUIDs listed above have no matching metadata under `Assets/`, and no `UnitSpawner` or `UnitController` source files were found there. Recover the original gameplay assets and metadata before retesting both sides. Movement and combat could not be exercised because no units spawned; builds and Windows behavior remain untested.
