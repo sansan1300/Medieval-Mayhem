@@ -6,7 +6,7 @@ Source inspection and Play Mode verification: 2026-10-25. The recovered tutorial
 
 Made by a parent and son, with beginner-friendly, incremental Unity learning as a priority. The intended game supports 2–4 players, each owning a village. Players spend gold on units with different costs and stats and send them against opposing villages. Upgradeable village buildings generate income, creating a choice between economic investment and immediate military strength.
 
-The player-control style, local/online multiplayer format, unit roster, balance values, and final win rules remain open. Starter Assets being installed does not decide the final control scheme.
+Third-person exploration is now a tested local prototype on `world-exploration`; it does not settle the final player-control or multiplayer format. Unit roster, balance values, and final win rules remain open.
 
 ## Verified environment
 
@@ -27,6 +27,7 @@ The player-control style, local/online multiplayer format, unit roster, balance 
 - Recovered gameplay source: `Assets/Scripts/Spawning/UnitSpawner.cs` and `Assets/Scripts/Units/UnitController.cs`. Soldier prefabs: `Assets/Prefabs/Units/Basic_Soldier_Player1.prefab` and `Basic_Soldier_Player2.prefab`, tagged `Player1` and `Player2` respectively.
 - `ProjectSettings/TagManager.asset` defines `Player1` and `Player2` tags. Village objects themselves are saved as `Untagged`.
 - `Assets/Scenes/SampleScene.unity` also exists. `ProjectSettings/EditorBuildSettings.asset` enables only SampleScene, not the prototype.
+- On `world-exploration`, the same prototype scene contains a `WorldExploration` prefab instance. It adds a team-owned third-person observer and separate follow camera, with F5 switching back to the original camera. The player is a variant of Starter Assets `PlayerArmature`, retains the `Player` tag, and is not a soldier combat target. See [controls, assignments, and verification](WORLD_EXPLORATION.md).
 
 ## Recovered source and remaining limits
 
@@ -83,3 +84,11 @@ At that time, source checks confirmed the four referenced GUIDs had no matching 
 - The scene metadata conflict was resolved by retaining the working computer's original scene GUID `15da031916ef0a544a75dafdd9524ade`. No source references to the Mac-generated scene GUID `4a2b7ea8831304c7598c6b8dcf692622` were found under `Assets/`, `ProjectSettings/`, or `Packages/` before replacement. No duplicate GUIDs were found under `Assets/` after recovery.
 
 The tutorial spawning/movement/combat baseline is observed working on this Mac. Original material appearance, an unobstructed soldier reaching a village without defenders, bounded chasing and resuming the village objective, village damage, friendly-fire edge cases, Windows behavior, and builds remain untested or unimplemented. The missing material is still a recovery follow-up; milestone 1 acceptance has not been met.
+
+## World exploration check — 2026-10-25
+
+On branch `world-exploration`, the shared scene passed 29 temporary runtime checks over approximately 43 simulated seconds in Unity 6000.4.6f1 on macOS. These covered both team spawns/colours, keyboard walking/sprinting/jumping/landing, mouse-input camera rotation, cursor release, F5 and Inspector camera toggles, component disable/re-enable, soldier collision exclusion, and existing spawning/movement/damage/removal for both AI sides. Zero runtime warnings/errors were captured; stopping Play Mode left zero soldiers. The imported assets, existing battlefield objects, AI scripts, physics settings, and packages were not changed. Temporary tools were removed; see [the handoff](WORLD_EXPLORATION.md#verification--2026-10-25) for the method and remaining limits.
+
+## Integration with latest main — 2026-10-25
+
+Rebased `world-exploration` onto main `04d0e53`, which includes village health/destruction, revised soldier objective combat, and world-space health bars. Preserved the uncommitted exploration scripts/prefabs and restored the shared scene by retaining both the upstream village components and the exploration prefab instance. The exploration Play Mode evidence above predates these incoming changes; combined gameplay, health-bar orientation during camera switching, and post-destruction behavior have not been retested.

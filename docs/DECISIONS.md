@@ -54,9 +54,17 @@ Append significant decisions as the project evolves. Include date, status, reaso
 - Reason: The branch restores the exact gameplay GUIDs referenced by the prototype. The Mac-generated scene metadata had no source references in the inspected asset/settings/package files; retaining the original preserves the working project's scene identity.
 - Consequence: Existing targeting limitations remain for milestone 1. The shared material still needs recovery; record Play Mode evidence and remaining gaps in project context.
 
+## D007 — Prototype exploration inside the shared battlefield
+
+- Date: 2026-10-25
+- Status: Accepted — user direction
+- Decision: Use one shared prototype scene and a project-owned exploration rig plus Starter Assets player prefab variant. Offer a team dropdown, a matching team marker/start position, and exploration/original-camera switching. Keep the avatar outside combat initially.
+- Reason: A duplicated scene would drift as collaborators update the battlefield. The installed third-person controller already supplies movement/input/animation; team tags used by soldiers cannot safely identify a non-soldier player.
+- Consequence: Scene changes are limited to one rig instance and its references. Team data is separate from AI tags. A small camera follower avoids modifying the legacy imported camera rig or upgrading packages. Final player combat and multiplayer remain open. Initially based on main before village-destruction; rebased onto main `04d0e53` on 2026-10-25 to include the village and health-bar changes. Combined runtime behavior still needs retesting.
+
 ## Open decisions
 
-- Player-control style and shared-device/local versus online multiplayer.
+- Final player-control style and shared-device/local versus online multiplayer; third-person exploration is a provisional local prototype.
 - Final 2–4-player elimination/win conditions, including how eliminated villages behave.
 - Unit roster, stats, purchase costs, income tick rate, upgrade costs, and balance.
 - Recovery of the shared material and its dependencies from the original working project; scripts, prefabs, and navigation data have been recovered.

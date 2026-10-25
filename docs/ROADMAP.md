@@ -2,6 +2,10 @@
 
 This is an ordered plan, not an implementation checklist already completed. Keep each step small enough for a parent and son to understand and test together. See [current evidence](PROJECT_CONTEXT.md) and [decisions](DECISIONS.md).
 
+## Parallel prototype — world exploration
+
+User-authorized on 2026-10-25, branch `world-exploration` based on `main`. One team-owned third-person observer now walks among AI in the existing battlefield scene. Team selection is an Inspector dropdown; F5 toggles the original camera. Both team spawns, movement, camera rotation, mode toggles, and ongoing AI combat passed the recorded macOS Play Mode checks. See [setup and verification](WORLD_EXPLORATION.md). Rebased onto main `04d0e53`, including village-destruction and health-bar source changes. The exploration checks predate that integration; combined Play Mode behavior needs retesting. This does not complete village combat or commit to a final multiplayer/control design.
+
 ## 0. Recover and prove the tutorial baseline
 
 Status, 2026-10-25: original scripts, prefabs, and baked NavMesh data recovered from `share-missing-unity-assets`. Both sides spawned, moved, lost health, and had damaged units removed during a 35-second macOS Play Mode check with no warnings/errors. See [verification and limits](PROJECT_CONTEXT.md#recovery-play-mode-check--2026-10-25). Recover the still-unresolved shared material from the working computer; original appearance and unobstructed travel to the opposing village remain unverified.
