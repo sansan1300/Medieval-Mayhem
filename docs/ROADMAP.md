@@ -4,7 +4,9 @@ This is an ordered plan, not an implementation checklist already completed. Keep
 
 ## 0. Recover and prove the tutorial baseline
 
-Resolve the missing UnitSpawner script, soldier prefabs/controllers, and baked NavMesh data noted in project context. Prefer recovering original assets and their metadata. Confirm the actual controller behavior before changing it.
+Status, 2026-10-25: original scripts, prefabs, and baked NavMesh data recovered from `share-missing-unity-assets`. Both sides spawned, moved, lost health, and had damaged units removed during a 35-second macOS Play Mode check with no warnings/errors. See [verification and limits](PROJECT_CONTEXT.md#recovery-play-mode-check--2026-10-25). Recover the still-unresolved shared material from the working computer; original appearance and unobstructed travel to the opposing village remain unverified.
+
+Keep the recovered original assets and metadata. The actual controller has been inspected: it searches globally for the closest enemy every frame, has no chase bound, and does not explicitly resume the village destination after disengagement. Preserve the baseline while implementing milestone 1 incrementally.
 
 Acceptance: in the prototype scene, no missing gameplay components or Console errors; both sides spawn on navigable ground and travel toward opposing villages; opposing units can fight and die if the tutorial implementation is recovered. Record any remaining gap instead of claiming completion. Do not add economy or networking yet.
 

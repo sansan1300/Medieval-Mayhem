@@ -46,9 +46,17 @@ Append significant decisions as the project evolves. Include date, status, reaso
 
 - 2026-10-25: Prototype scene metadata committed in `0fcfc32`; `.gitignore` converted to UTF-8 in `1ba394f` with its rules preserved. Generated Unity/IDE files were verified ignored, and both changes were pushed to `origin/main`.
 
+## D006 — Preserve the recovered original gameplay assets and scene identity
+
+- Date: 2026-10-25
+- Status: Accepted — asset recovery
+- Decision: Integrate `share-missing-unity-assets` without rewriting its gameplay. Resolve the scene metadata conflict using the original working computer's GUID `15da031916ef0a544a75dafdd9524ade`.
+- Reason: The branch restores the exact gameplay GUIDs referenced by the prototype. The Mac-generated scene metadata had no source references in the inspected asset/settings/package files; retaining the original preserves the working project's scene identity.
+- Consequence: Existing targeting limitations remain for milestone 1. The shared material still needs recovery; record Play Mode evidence and remaining gaps in project context.
+
 ## Open decisions
 
 - Player-control style and shared-device/local versus online multiplayer.
 - Final 2–4-player elimination/win conditions, including how eliminated villages behave.
 - Unit roster, stats, purchase costs, income tick rate, upgrade costs, and balance.
-- Recovery source for missing tutorial assets; reconstruct only as a separately scoped task if originals cannot be recovered.
+- Recovery of the shared material and its dependencies from the original working project; scripts, prefabs, and navigation data have been recovered.

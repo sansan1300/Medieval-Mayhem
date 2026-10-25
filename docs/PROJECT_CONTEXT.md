@@ -1,6 +1,6 @@
 # Medieval Mayhem — project context
 
-Source inspection: 2026-10-25. This is a living snapshot, not a claim that the game has passed Play Mode testing.
+Source inspection and Play Mode verification: 2026-10-25. The recovered tutorial baseline spawns, moves, and fights in the tested macOS editor; future milestones are not implemented or verified by that result.
 
 ## Game and collaborators
 
@@ -22,25 +22,28 @@ The player-control style, local/online multiplayer format, unit roster, balance 
 ## What is actually in this checkout
 
 - `Assets/Scenes/Prototype_SpawningAndPathfinding.unity`: two village objects (`Village_Player1`, `Village_Player2`), two spawn points (`SpawnPoint_Player1`, `SpawnPoint_Player2`), `Player1Spawner`, `Player2Spawner`, ground, camera, and light.
-- Both spawners serialize a `UnitSpawner` component, a spawn point, an opposing village target, a prefab reference, and `spawnInterval: 3`. These are saved fields; the editor shows missing scripts and neither side spawned units in the Play Mode check below.
-- Ground serializes a `Unity.AI.Navigation.NavMeshSurface` and a baked NavMesh data reference. The referenced data asset could not be found under `Assets/`.
+- Both spawners have a recovered `UnitSpawner` component, the corresponding spawn point and soldier prefab, an opposing village target, and `spawnInterval: 3`. References were checked in both Inspectors; both sides spawned in Play Mode.
+- Ground serializes a `Unity.AI.Navigation.NavMeshSurface` referencing the recovered `Assets/Scenes/Prototype_SpawningAndPathfinding/NavMesh-Ground.asset`. Sampled soldiers stayed on the NavMesh during the verification run.
+- Recovered gameplay source: `Assets/Scripts/Spawning/UnitSpawner.cs` and `Assets/Scripts/Units/UnitController.cs`. Soldier prefabs: `Assets/Prefabs/Units/Basic_Soldier_Player1.prefab` and `Basic_Soldier_Player2.prefab`, tagged `Player1` and `Player2` respectively.
 - `ProjectSettings/TagManager.asset` defines `Player1` and `Player2` tags. Village objects themselves are saved as `Untagged`.
 - `Assets/Scenes/SampleScene.unity` also exists. `ProjectSettings/EditorBuildSettings.asset` enables only SampleScene, not the prototype.
 
-## Tutorial report versus source evidence
+## Recovered source and remaining limits
 
-The tutorial describes NavMesh soldier prefabs, unit spawners, and `UnitController` with health, enemy detection, and automatic combat. This checkout does **not** contain project-owned `UnitSpawner.cs`, `UnitController.cs`, or soldier prefabs, including when ignored files under `Assets/` are included in the search. Present C# files belong to Starter Assets or template tutorial support.
+The initial checkout was missing the tutorial gameplay files. Recovery branch `share-missing-unity-assets`, commit `390d43f`, supplied the original scripts, soldier prefabs, and baked navigation data with their metadata. The four previously unresolved references now each resolve to one local asset:
 
-The prototype has unresolved asset references:
-
-| Reference | GUID absent from local `Assets/**/*.meta` |
+| Recovered reference | GUID present in local asset metadata |
 | --- | --- |
 | UnitSpawner script | `b8271d51702ded845b74269634971216` |
 | Player 1 unit prefab | `ea89e51dc545d334ebabac564ca564be` |
 | Player 2 unit prefab | `f2bc4210a269a0d4e909f08f21c5ee1c` |
 | Baked NavMesh data | `121e6e81f7ae6a04cb1417ecefac2f20` |
 
-Treat spawning, movement, unit health, and auto-combat as tutorial-reported and requiring recovery/verification. Village health/destruction, purchases, gold income, building upgrades, and match completion were not found implemented. Multiplayer is not implemented in the inspected project: Multiplayer Center is declared, but that tooling package is not a playable network session or player ownership system.
+Spawning, movement, unit health loss, and removal after damage were observed in Play Mode as recorded below. Source inspection shows `UnitController` searches all opposing tagged objects every frame and chases the closest unit without a distance/time bound. It sets the village destination only in `Start()` and does not explicitly resume it or clear `agent.isStopped` when no enemy remains. Those targeting limitations are unchanged.
+
+Village health/destruction, purchases, gold income, building upgrades, and match completion were not found implemented. Multiplayer is not implemented in the inspected project: Multiplayer Center is declared, but that tooling package is not a playable network session or player ownership system.
+
+One asset dependency remains unresolved in source: material GUID `31321ba15b8f8eb4c954353edc038b1d`, referenced by ground, villages, and both soldier prefabs, has no matching metadata under `Assets/`. The scene renders and gameplay ran without warnings/errors, but its original material/appearance is not verified. Recover that material and any dependencies from the working computer; do not invent a replacement GUID.
 
 ## Collaboration and repository cautions
 
@@ -54,10 +57,10 @@ Coordinate scene and prefab editing so only one collaborator edits a given asset
 
 1. Open this project folder in Unity Hub with editor 6000.4.6f1.
 2. Open `Assets/Scenes/Prototype_SpawningAndPathfinding.unity` explicitly; do not assume the default/build scene is the prototype.
-3. Inspect Console and both spawners for missing scripts/prefabs. Recover original scripts, prefabs, and navigation data together with their `.meta` files before testing or extending behavior. If recovery is impossible, agree on a small reconstruction task.
-4. Once repaired, test both sides spawning and moving to the opposing village, then unit combat. Record observed results here.
+3. Inspect Console and both spawners. `Player1Spawner` should reference `Basic_Soldier_Player1`, `SpawnPoint_Player1`, and `Village_Player2`; `Player2Spawner` should reference `Basic_Soldier_Player2`, `SpawnPoint_Player2`, and `Village_Player1`. Both intervals are 3 seconds. Ground's `NavMesh Surface` should reference `NavMesh-Ground`.
+4. Enter Play Mode: both sides should spawn capsule soldiers, move toward the battlefield, and exchange damage when they meet. Stop Play Mode to reset. Recheck on each collaborator's machine; Windows and builds have not been tested here.
 
-## Play Mode baseline check — 2026-10-25
+## Initial Play Mode baseline check — 2026-10-25, before recovery
 
 Result: failed baseline acceptance; the scene opens and enters Play Mode but does not spawn units.
 
@@ -68,4 +71,15 @@ Result: failed baseline acceptance; the scene opens and enters Play Mode but doe
 - Console showed two warnings, both `The referenced script (Unknown) on this Behaviour is missing!`, and zero errors. Entering Play Mode was not blocked by a compilation error; no separate clean compilation or build was run.
 - Stopped Play Mode and confirmed the editor returned to edit mode. No scene, prefab, script, or navigation changes were made.
 
-Source checks also reconfirmed that the four referenced GUIDs listed above have no matching metadata under `Assets/`, and no `UnitSpawner` or `UnitController` source files were found there. Recover the original gameplay assets and metadata before retesting both sides. Movement and combat could not be exercised because no units spawned; builds and Windows behavior remain untested.
+At that time, source checks confirmed the four referenced GUIDs had no matching metadata under `Assets/`, and no `UnitSpawner` or `UnitController` source files were found there. Movement and combat could not be exercised because no units spawned. This failure is superseded by the recovery check below.
+
+## Recovery Play Mode check — 2026-10-25
+
+- Opened Unity 6000.4.6f1 on macOS after importing the recovered assets. Both spawners' Inspector assignments resolved; soldiers from both sides appeared in the scene.
+- Ran a second Play Mode session with temporary editor instrumentation for 35 simulated seconds. It observed the original gameplay without changing its scripts, prefab values, or scene wiring. The temporary code enabled background execution for that session and was removed with its generated metadata after the check.
+- Initial soldiers: 0. Player 1: 11 spawned, 11 moved more than 0.5 units from their first sampled position, 10 lost health, and 8 disappeared after observed health loss. Player 2: the same counts. The recovered controller destroys soldiers at zero health.
+- Two spawners had valid prefab, spawn point, and target references. Missing scene scripts: 0. Samples of soldiers without an active NavMesh placement: 0. Runtime warnings/errors/exceptions captured: 0; Console also showed zero warnings/errors.
+- Stopped Play Mode and verified return to Edit Mode with 0 soldiers. Removed the temporary instrumentation and refreshed the editor; no temporary test assets remain.
+- The scene metadata conflict was resolved by retaining the working computer's original scene GUID `15da031916ef0a544a75dafdd9524ade`. No source references to the Mac-generated scene GUID `4a2b7ea8831304c7598c6b8dcf692622` were found under `Assets/`, `ProjectSettings/`, or `Packages/` before replacement. No duplicate GUIDs were found under `Assets/` after recovery.
+
+The tutorial spawning/movement/combat baseline is observed working on this Mac. Original material appearance, an unobstructed soldier reaching a village without defenders, bounded chasing and resuming the village objective, village damage, friendly-fire edge cases, Windows behavior, and builds remain untested or unimplemented. The missing material is still a recovery follow-up; milestone 1 acceptance has not been met.
