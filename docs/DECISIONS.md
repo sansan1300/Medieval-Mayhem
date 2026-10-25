@@ -109,6 +109,14 @@ Append significant decisions as the project evolves. Include date, status, reaso
 - Decision: Add a project-owned `UnitPurchasing` prefab instance to the existing prototype scene. Its scene overrides reference exploration, both existing spawners, and both villages. Use a small IMGUI menu and a pure `GoldWallet` class with focused Edit Mode tests.
 - Reason: Preserve shared battlefield updates and keep the first economy step easy to inspect and tune without duplicating the scene or changing vendor assets.
 - Consequence: Scene references belong to the instance; starting gold and cost live on the prefab. The automatic spawn loop is unchanged. Paid spawns validate team, village, prefab, and navigable spawn placement before charging. Menu inputs coordinate with exploration. D009-D012 passed the recorded local checks; Windows and builds remain unverified.
+## D014 — End the prototype match when a village falls
+
+- Date: 2026-10-25
+- Status: Implemented; both winner/restart paths verified on macOS, 2026-10-26
+- Integration note: Renumbered upstream D009 to D014 to preserve unique decision IDs alongside purchasing D009-D013.
+- Decision: Show the opposing player as the winner when a village reaches zero health, stop AI soldiers and spawners, and offer a Restart button that reloads the prototype scene.
+- Reason: A clear round ending makes village attacks meaningful and provides a simple way to play again.
+- Consequence: The prototype scene is enabled in Build Settings. Combined purchasing/victory checks cover both winners and native mouse restart; the shop and paid spawns close at match end, and exploration preserves the victory cursor. Windows/build behavior remains unverified.
 
 ## Open decisions
 

@@ -13,8 +13,15 @@ public class UnitSpawner : MonoBehaviour
 
     private float timer;
 
+    private bool stopped;
+
     void Update()
     {
+        if (stopped || VictorySystem.IsGameOver)
+        {
+            return;
+        }
+
         timer += Time.deltaTime;
 
         if (timer >= spawnInterval)
@@ -28,6 +35,11 @@ public class UnitSpawner : MonoBehaviour
     public bool CanSpawnPurchasedUnit(out string problem)
     {
         problem = null;
+        if (stopped || VictorySystem.IsGameOver)
+        {
+            problem = "The match has ended.";
+            return false;
+        }
         if (unitPrefab == null || spawnPoint == null || target == null)
             problem = "Spawn point or opposing village is unavailable.";
         else if (unitPrefab.GetComponent<UnitController>() == null)
@@ -84,5 +96,10 @@ public class UnitSpawner : MonoBehaviour
 
         controller.target = target;
         return controller;
+    }
+
+    public void StopForVictory()
+    {
+        stopped = true;
     }
 }

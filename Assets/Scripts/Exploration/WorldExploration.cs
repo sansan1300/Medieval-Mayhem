@@ -62,6 +62,13 @@ public class WorldExploration : MonoBehaviour
 
     void Update()
     {
+        if (VictorySystem.IsGameOver)
+        {
+            CaptureCursor(false);
+            StopPlayerInput();
+            return;
+        }
+
         if (Keyboard.current != null && Keyboard.current.f5Key.wasPressedThisFrame)
             explorationEnabled = !explorationEnabled;
 
@@ -101,7 +108,7 @@ public class WorldExploration : MonoBehaviour
     {
         PurchaseMenuOpen = open;
         if (!started) return;
-        CaptureCursor(explorationEnabled && !open);
+        CaptureCursor(explorationEnabled && !open && !VictorySystem.IsGameOver);
         StopPlayerInput();
         if (!open) controlsRestoredFrame = Time.frameCount;
     }

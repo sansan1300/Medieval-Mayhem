@@ -15,6 +15,7 @@ public class VillageHealth : MonoBehaviour
 
     void Awake()
     {
+        VictorySystem.EnsureExists();
         CurrentHealth = Mathf.Max(1f, startingHealth);
         healthBar = gameObject.AddComponent<WorldHealthBar>();
         healthBar.Initialize(transform, CurrentHealth, CurrentHealth, 1.6f, 2.2f);
@@ -33,6 +34,7 @@ public class VillageHealth : MonoBehaviour
         if (CurrentHealth == 0f)
         {
             IsDestroyed = true;
+            VictorySystem.Instance.DeclareWinner(ownerTag);
             Destroy(gameObject);
         }
     }

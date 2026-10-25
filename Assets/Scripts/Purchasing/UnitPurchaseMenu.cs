@@ -34,7 +34,7 @@ public class UnitPurchaseMenu : MonoBehaviour
 
     void Update()
     {
-        if (exploration == null || !exploration.isActiveAndEnabled)
+        if (VictorySystem.IsGameOver || exploration == null || !exploration.isActiveAndEnabled)
         {
             if (IsOpen) SetOpen(false);
             return;
@@ -53,7 +53,7 @@ public class UnitPurchaseMenu : MonoBehaviour
 
     public void SetOpen(bool open)
     {
-        IsOpen = open && exploration != null && exploration.isActiveAndEnabled;
+        IsOpen = open && !VictorySystem.IsGameOver && exploration != null && exploration.isActiveAndEnabled;
         Feedback = null;
         if (exploration != null) exploration.SetPurchaseMenuOpen(IsOpen);
     }
@@ -70,6 +70,7 @@ public class UnitPurchaseMenu : MonoBehaviour
 
     string PurchaseProblem()
     {
+        if (VictorySystem.IsGameOver) return "The match has ended.";
         if (exploration == null || !exploration.isActiveAndEnabled)
             return "Player team is unavailable.";
         var wallet = Wallet(exploration.team);
@@ -113,7 +114,7 @@ public class UnitPurchaseMenu : MonoBehaviour
 
     void OnGUI()
     {
-        if (exploration == null || player1Gold == null) return;
+        if (VictorySystem.IsGameOver || exploration == null || player1Gold == null) return;
         if (titleStyle == null)
         {
             titleStyle = new GUIStyle(GUI.skin.label) { fontSize = 23, fontStyle = FontStyle.Bold };

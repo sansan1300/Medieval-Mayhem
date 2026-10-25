@@ -52,6 +52,12 @@ public class UnitController : MonoBehaviour
 
     void Update()
     {
+        if (VictorySystem.IsGameOver)
+        {
+            StopForVictory();
+            return;
+        }
+
         if (target != null && targetVillage == null)
         {
             targetVillage = target.GetComponent<VillageHealth>();
@@ -224,6 +230,20 @@ public class UnitController : MonoBehaviour
         if (health == 0f)
         {
             Die();
+        }
+    }
+
+    public void StopForVictory()
+    {
+        if (agent == null)
+        {
+            agent = GetComponent<NavMeshAgent>();
+        }
+
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
         }
     }
 
