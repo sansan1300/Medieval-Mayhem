@@ -7,7 +7,11 @@ public class UnitController : MonoBehaviour
 
     public float health = 100f;
 
+    public float maxHealth = 100f;
+
     public float attackRange = 2f;
+
+    public float villageAttackRange = 1.5f;
 
     public float attackDamage = 20f;
 
@@ -25,9 +29,15 @@ public class UnitController : MonoBehaviour
 
     private VillageHealth targetVillage;
 
+    private WorldHealthBar healthBar;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        maxHealth = Mathf.Max(1f, maxHealth);
+        health = Mathf.Clamp(health, 0f, maxHealth);
+        healthBar = gameObject.AddComponent<WorldHealthBar>();
+        healthBar.Initialize(transform, health, maxHealth, 1.35f, 0.9f);
 
         if (target != null)
         {
@@ -38,6 +48,11 @@ public class UnitController : MonoBehaviour
 
     void Update()
     {
+        if (target != null && targetVillage == null)
+        {
+            targetVillage = target.GetComponent<VillageHealth>();
+        }
+
         if (target == null || (targetVillage != null && targetVillage.IsDestroyed))
         {
             agent.isStopped = true;
@@ -145,9 +160,17 @@ public class UnitController : MonoBehaviour
 
     bool IsVillageInAttackRange()
     {
-        return targetVillage != null
-            && targetVillage.ownerTag != gameObject.tag
-            && Vector3.Distance(transform.position, target.position) <= attackRange;
+        if (targetVillage == null || targetVillage.ownerTag == gameObject.tag)
+        {
+            return false;
+        }
+
+        Collider villageCollider = targetVillage.GetComponent<Collider>();
+        Vector3 closestPoint = villageCollider != null
+            ? villageCollider.ClosestPoint(transform.position)
+            : target.position;
+
+        return Vector3.Distance(transform.position, closestPoint) <= villageAttackRange;
     }
 
     bool IsVillagePriorityRange()
@@ -186,9 +209,15 @@ public class UnitController : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        health -= damage;
+        if (health <= 0f || damage <= 0f)
+        {
+            return;
+        }
 
-        if (health <= 0)
+        health = Mathf.Max(0f, health - damage);
+        healthBar.SetHealth(health);
+
+        if (health == 0f)
         {
             Die();
         }
