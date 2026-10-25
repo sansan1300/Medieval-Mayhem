@@ -60,7 +60,15 @@ Append significant decisions as the project evolves. Include date, status, reaso
 - Status: Accepted — user direction
 - Decision: Use one shared prototype scene and a project-owned exploration rig plus Starter Assets player prefab variant. Offer a team dropdown, a matching team marker/start position, and exploration/original-camera switching. Keep the avatar outside combat initially.
 - Reason: A duplicated scene would drift as collaborators update the battlefield. The installed third-person controller already supplies movement/input/animation; team tags used by soldiers cannot safely identify a non-soldier player.
-- Consequence: Scene changes are limited to one rig instance and its references. Team data is separate from AI tags. A small camera follower avoids modifying the legacy imported camera rig or upgrading packages. Final player combat and multiplayer remain open. Initially based on main before village-destruction; rebased onto main `04d0e53` on 2026-10-25 to include the village and health-bar changes. Combined runtime behavior still needs retesting.
+- Consequence: Scene changes are limited to one rig instance and its references. Team data is separate from AI tags. A small camera follower avoids modifying the legacy imported camera rig or upgrading packages. Final player combat and multiplayer remain open. Initially based on main before village-destruction; rebased onto main `04d0e53` on 2026-10-25 to include the village and health-bar changes. Basic combined runtime behavior was subsequently checked as recorded in project context; full match-end acceptance remains open.
+
+## D008 — Health bars follow the active exploration or overview camera
+
+- Date: 2026-10-25
+- Status: Accepted — integration fix
+- Decision: Reacquire `Camera.main` and update the world-space Canvas reference when a health bar's cached camera becomes inactive.
+- Reason: Exploration deactivates the original camera; retaining that camera would orient bars toward a view the player is no longer using.
+- Consequence: Existing bars follow both camera modes without changing health, combat, or targeting rules. Verified in the combined Play Mode checks.
 
 ## Open decisions
 

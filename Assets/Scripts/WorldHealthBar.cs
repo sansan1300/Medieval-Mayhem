@@ -82,9 +82,10 @@ public class WorldHealthBar : MonoBehaviour
 
         barTransform.position = target.position + offset;
 
-        if (viewCamera == null)
+        if (viewCamera == null || !viewCamera.isActiveAndEnabled)
         {
             viewCamera = Camera.main;
+            barTransform.GetComponent<Canvas>().worldCamera = viewCamera;
         }
 
         if (viewCamera != null)

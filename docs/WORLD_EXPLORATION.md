@@ -1,6 +1,6 @@
 # World exploration prototype
 
-Branch: `world-exploration`, originally based on `main` at `615dc56`, rebased onto `04d0e53` on 2026-10-25. It now includes main's village health/destruction and world-space health bars. The checks below predate that integration; combined Play Mode behavior has not been retested.
+Branch: `world-exploration`, originally based on `main` at `615dc56`, rebased onto `04d0e53` on 2026-10-25. It now includes main's village health/destruction and world-space health bars. The initial checks below predate that integration; the later combined checks cover the integrated scene and active-camera health-bar fix.
 
 ## Try it in Unity
 
@@ -57,4 +57,14 @@ Tested the explicit prototype scene in Unity 6000.4.6f1 on macOS. Visually inspe
 
 Unity generated the prefabs and metadata and wired the scene through editor APIs. The scene diff adds only the new prefab instance, its three scene references, and its root entry. Temporary authoring/verification tools were removed.
 
-Still untested: Windows, builds, gamepad, physical mouse feel over a longer session, click/focus behavior across all editor layouts, camera collision at every obstacle, and falling off the battlefield. The missing original battlefield material remains as documented in [project context](PROJECT_CONTEXT.md). Main now supplies updated AI targeting, village combat, and health bars; their interaction with exploration and camera switching needs a fresh Play Mode check. Player combat, a team-selection menu, and multiplayer remain outside this prototype.
+Still untested: Windows, builds, gamepad, physical mouse feel over a longer session, click/focus behavior across all editor layouts, camera collision at every obstacle, and falling off the battlefield. The missing original battlefield material remains as documented in [project context](PROJECT_CONTEXT.md). Main supplies updated AI targeting, village combat, and health bars. Combined checks below cover basic integration; full village-destruction and match-end acceptance remains open. Player combat, a team-selection menu, and multiplayer remain outside this prototype.
+
+## Combined integration check — 2026-10-25
+
+After rebasing onto main `04d0e53`, tested the integrated scene in Unity 6000.4.6f1 on macOS. Health bars now reacquire `Camera.main` when their cached camera is inactive and update their world-space Canvas camera, so they follow exploration/overview switching.
+
+A 38-second smoke check confirmed both team spawns/movement, AI spawning and unit damage, NavMesh placement, and health-bar camera switching with zero captured runtime warnings/errors. Neither village took damage in that balanced battle; this does not demonstrate match completion.
+
+A subsequent 46-second run passed 16 integration checks. It repeated team movement/camera and basic AI checks, then temporarily stopped spawners and removed defenders in Play Mode only. A single soldier from each side separately reached and damaged its opposing village within a 12-second observation. Health bars retained the active camera; no runtime warnings/errors were captured. Stopping Play Mode returned to zero soldiers, restoring the saved spawners/scene. Temporary instrumentation and metadata were removed.
+
+Village destruction at zero health, winner feedback, match spawning shutdown, chase/reacquisition edge cases, and Windows/build behavior remain outside this verification. Winner feedback and match spawning shutdown remain roadmap work.

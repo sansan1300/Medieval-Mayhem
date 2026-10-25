@@ -4,7 +4,7 @@ This is an ordered plan, not an implementation checklist already completed. Keep
 
 ## Parallel prototype — world exploration
 
-User-authorized on 2026-10-25, branch `world-exploration` based on `main`. One team-owned third-person observer now walks among AI in the existing battlefield scene. Team selection is an Inspector dropdown; F5 toggles the original camera. Both team spawns, movement, camera rotation, mode toggles, and ongoing AI combat passed the recorded macOS Play Mode checks. See [setup and verification](WORLD_EXPLORATION.md). Rebased onto main `04d0e53`, including village-destruction and health-bar source changes. The exploration checks predate that integration; combined Play Mode behavior needs retesting. This does not complete village combat or commit to a final multiplayer/control design.
+User-authorized on 2026-10-25, branch `world-exploration` based on `main`. One team-owned third-person observer now walks among AI in the existing battlefield scene. Team selection is an Inspector dropdown; F5 toggles the original camera. Both team spawns, movement, camera rotation, mode toggles, and ongoing AI combat passed the recorded macOS Play Mode checks. See [setup and verification](WORLD_EXPLORATION.md). Rebased onto main `04d0e53`, including village-destruction and health-bar source changes. Initial exploration checks predate that integration. Later combined macOS checks confirmed team movement, AI combat, both sides damaging undefended villages, and health bars following camera switches; full match-end acceptance remains open. This does not complete village combat or commit to a final multiplayer/control design.
 
 ## 0. Recover and prove the tutorial baseline
 
