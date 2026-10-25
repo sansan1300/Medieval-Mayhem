@@ -13,11 +13,17 @@ public class UnitController : MonoBehaviour
 
     public float attackRate = 1f;
 
+    public float enemyChaseRange = 8f;
+
+    public float villagePriorityRange = 8f;
+
     private float attackTimer;
 
     private NavMeshAgent agent;
 
     private UnitController enemyTarget;
+
+    private VillageHealth targetVillage;
 
     void Start()
     {
@@ -26,11 +32,39 @@ public class UnitController : MonoBehaviour
         if (target != null)
         {
             agent.SetDestination(target.position);
+            targetVillage = target.GetComponent<VillageHealth>();
         }
     }
 
     void Update()
     {
+        if (target == null || (targetVillage != null && targetVillage.IsDestroyed))
+        {
+            agent.isStopped = true;
+            enemyTarget = null;
+            return;
+        }
+
+        // Once the soldier reaches its objective, it attacks the village even if
+        // defenders are nearby. This prevents defenders at their spawn point
+        // from keeping attackers away from the base.
+        if (IsVillageInAttackRange())
+        {
+            enemyTarget = null;
+            agent.isStopped = true;
+            AttackVillage();
+            return;
+        }
+
+        if (IsVillagePriorityRange())
+        {
+            enemyTarget = null;
+            agent.isStopped = false;
+            agent.SetDestination(target.position);
+            attackTimer = 0f;
+            return;
+        }
+
         FindEnemy();
 
         if (enemyTarget != null)
@@ -51,12 +85,32 @@ public class UnitController : MonoBehaviour
                 agent.isStopped = false;
 
                 agent.SetDestination(enemyTarget.transform.position);
+                attackTimer = 0f;
             }
+        }
+        else
+        {
+            // Resume the assigned village objective after nearby enemies die or
+            // leave the chase range.
+            agent.isStopped = false;
+            agent.SetDestination(target.position);
+            attackTimer = 0f;
         }
     }
 
     void FindEnemy()
     {
+        if (enemyTarget != null)
+        {
+            float currentDistance = Vector3.Distance(transform.position, enemyTarget.transform.position);
+            if (currentDistance <= enemyChaseRange)
+            {
+                return;
+            }
+
+            enemyTarget = null;
+        }
+
         string enemyTag =
             gameObject.tag == "Player1"
             ? "Player2"
@@ -75,15 +129,47 @@ public class UnitController : MonoBehaviour
                 enemy.transform.position
             );
 
-            if (distance < closestDistance)
+            if (distance <= enemyChaseRange && distance < closestDistance)
             {
-                closestDistance = distance;
-
-                closestEnemy = enemy.GetComponent<UnitController>();
+                UnitController candidate = enemy.GetComponent<UnitController>();
+                if (candidate != null)
+                {
+                    closestDistance = distance;
+                    closestEnemy = candidate;
+                }
             }
         }
 
         enemyTarget = closestEnemy;
+    }
+
+    bool IsVillageInAttackRange()
+    {
+        return targetVillage != null
+            && targetVillage.ownerTag != gameObject.tag
+            && Vector3.Distance(transform.position, target.position) <= attackRange;
+    }
+
+    bool IsVillagePriorityRange()
+    {
+        return targetVillage != null
+            && targetVillage.ownerTag != gameObject.tag
+            && Vector3.Distance(transform.position, target.position) <= villagePriorityRange;
+    }
+
+    void AttackVillage()
+    {
+        if (targetVillage == null || targetVillage.ownerTag == gameObject.tag)
+        {
+            return;
+        }
+
+        attackTimer += Time.deltaTime;
+        if (attackTimer >= attackRate)
+        {
+            targetVillage.TakeDamage(attackDamage);
+            attackTimer = 0f;
+        }
     }
 
     void AttackEnemy()

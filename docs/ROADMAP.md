@@ -14,9 +14,9 @@ Acceptance: in the prototype scene, no missing gameplay components or Console er
 
 Deliver in small steps, checking each before continuing:
 
-1. Add a simple village health component with Inspector-set starting health and a damage method. Verify health decreases and destruction happens once at zero. Use a temporary test method only if necessary and remove temporary test wiring before handoff.
-2. Connect soldier attacks to the opposing village when within reach. Preserve unit-versus-unit combat; prevent damage to friendly villages. An unobstructed soldier should reach and damage the opposing village.
-3. Improve targeting so units make progress toward villages. Proposed initial rule: consider only nearby opposing units, keep the current valid target to reduce switching, disengage beyond a bounded distance or chase duration, and resume the assigned village objective after disengagement/death. Prevent immediate reacquisition of an abandoned target from defeating the chase limit. Choose the simplest rule after inspecting recovered code; tune values in the Inspector.
+1. **In progress:** `Assets/Scripts/VillageHealth.cs` is attached to `Village_Player1` and `Village_Player2` in the prototype scene. Each has 500 starting health; `TakeDamage` reduces health and destroys its village at zero. Runtime behavior still needs Unity verification. Verify health decreases and destruction happens once at zero. Use a temporary test method only if necessary and remove temporary test wiring before handoff.
+2. **Implemented in source; needs Play Mode verification:** soldiers attack their assigned opposing village within `attackRange` and skip a village whose `ownerTag` matches their own tag. Unit-versus-unit combat remains active outside the village priority range.
+3. **Implemented in source; needs Play Mode verification:** soldiers retain a valid enemy target within `enemyChaseRange`, drop it outside that range, and resume the village objective. Within `villagePriorityRange` they focus on the village, avoiding repeated diversion to defenders near its spawn point. Both ranges default to 8 Unity units and are Inspector-editable.
 4. Add minimal defeat/winner feedback for the two-village prototype and stop further attacks/spawning for the ended match. Keep any required village objective reference safe after destruction. Restarting Play Mode is sufficient for the first reset.
 
 Acceptance checks in Play Mode:
