@@ -9,6 +9,8 @@ public class UnitController : MonoBehaviour
 
     public float maxHealth = 100f;
 
+    public float movementSpeed = 5.335f;
+
     public float attackRange = 2f;
 
     public float villageAttackRange = 1.5f;
@@ -34,6 +36,8 @@ public class UnitController : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        agent.speed = movementSpeed;
+        agent.autoBraking = false;
         maxHealth = Mathf.Max(1f, maxHealth);
         health = Mathf.Clamp(health, 0f, maxHealth);
         healthBar = gameObject.AddComponent<WorldHealthBar>();
