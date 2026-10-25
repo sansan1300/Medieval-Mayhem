@@ -21,6 +21,7 @@ public class WorldExploration : MonoBehaviour
     public ExplorationFollowCamera followCamera;
 
     public ExplorationPlayer Player { get; private set; }
+    public bool PurchaseMenuOpen { get; private set; }
 
     private StarterAssetsInputs inputs;
     private bool appliedMode;
@@ -31,6 +32,7 @@ public class WorldExploration : MonoBehaviour
     private CursorLockMode previousCursorLock;
     private bool previousCursorVisible;
     private GUIStyle helpStyle;
+    private int controlsRestoredFrame = -1;
 
     void OnEnable()
     {
@@ -69,19 +71,39 @@ public class WorldExploration : MonoBehaviour
         if (Player == null || Player.team != team || Player.transform.position.y < -10f)
             SpawnPlayer();
 
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (PurchaseMenuOpen)
+        {
+            CaptureCursor(false);
+            StopPlayerInput();
+            return;
+        }
+
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame
+            && Time.frameCount != controlsRestoredFrame)
             CaptureCursor(false);
         else if (!cursorCaptured && Application.isFocused && Mouse.current != null
                  && Mouse.current.leftButton.wasPressedThisFrame)
             CaptureCursor(true);
 
-        if (!cursorCaptured)
-        {
-            inputs.MoveInput(Vector2.zero);
-            inputs.LookInput(Vector2.zero);
-            inputs.JumpInput(false);
-            inputs.SprintInput(false);
-        }
+        if (!cursorCaptured) StopPlayerInput();
+    }
+
+    void StopPlayerInput()
+    {
+        if (inputs == null) return;
+        inputs.MoveInput(Vector2.zero);
+        inputs.LookInput(Vector2.zero);
+        inputs.JumpInput(false);
+        inputs.SprintInput(false);
+    }
+
+    public void SetPurchaseMenuOpen(bool open)
+    {
+        PurchaseMenuOpen = open;
+        if (!started) return;
+        CaptureCursor(explorationEnabled && !open);
+        StopPlayerInput();
+        if (!open) controlsRestoredFrame = Time.frameCount;
     }
 
     void ApplyMode()
@@ -94,7 +116,7 @@ public class WorldExploration : MonoBehaviour
         {
             if (Player == null || Player.team != team) SpawnPlayer();
             else Player.gameObject.SetActive(true);
-            CaptureCursor(true);
+            CaptureCursor(!PurchaseMenuOpen);
         }
         else
         {
@@ -124,7 +146,7 @@ public class WorldExploration : MonoBehaviour
         followCamera.target.rotation = facing * Quaternion.Euler(15f, 0f, 0f);
         // The prefab starts inactive so team, camera, and spawn are ready before Awake/Start.
         avatar.SetActive(true);
-        CaptureCursor(cursorCaptured);
+        CaptureCursor(cursorCaptured && !PurchaseMenuOpen);
     }
 
     void CaptureCursor(bool capture)
@@ -152,6 +174,7 @@ public class WorldExploration : MonoBehaviour
         if (overviewCamera != null) overviewCamera.gameObject.SetActive(overviewWasActive);
         Cursor.lockState = previousCursorLock;
         Cursor.visible = previousCursorVisible;
+        PurchaseMenuOpen = false;
         started = false;
     }
 
@@ -160,9 +183,11 @@ public class WorldExploration : MonoBehaviour
         if (!started) return;
         if (helpStyle == null)
             helpStyle = new GUIStyle(GUI.skin.box) { fontSize = 16, alignment = TextAnchor.MiddleLeft };
-        string help = explorationEnabled
-            ? $"  Team: {team}   |   WASD: walk   Shift: run   Space: jump\n  Mouse: look   Esc: release cursor   Click: resume   F5: overview"
-            : "  Overview   |   F5: explore the battlefield";
-        GUI.Box(new Rect(12, 12, 620, explorationEnabled ? 56 : 34), help, helpStyle);
+        string help = PurchaseMenuOpen
+            ? "  Shopping — player movement and look paused\n  B / Esc: close shop   |   Battle continues"
+            : explorationEnabled
+                ? $"  Team: {team}   |   WASD: walk   Shift: run   Space: jump\n  Mouse: look   Esc: release cursor   Click: resume   F5: overview"
+                : "  Overview   |   F5: explore the battlefield   B: shop";
+        GUI.Box(new Rect(12, 12, 620, explorationEnabled || PurchaseMenuOpen ? 56 : 34), help, helpStyle);
     }
 }

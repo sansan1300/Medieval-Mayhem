@@ -1,0 +1,6 @@
+{
+    "name": "MedievalMayhem.Economy.Tests",
+    "references": ["MedievalMayhem.Economy"],
+    "includePlatforms": ["Editor"],
+    "optionalUnityReferences": ["TestAssemblies"]
+}

@@ -70,6 +70,46 @@ Append significant decisions as the project evolves. Include date, status, reaso
 - Reason: Exploration deactivates the original camera; retaining that camera would orient bars toward a view the player is no longer using.
 - Consequence: Existing bars follow both camera modes without changing health, combat, or targeting rules. Verified in the combined Play Mode checks.
 
+## D009 — Open the unit purchase menu with B
+
+- Date: 2026-10-26
+- Status: Accepted — user direction
+- Decision: On the `unit-purchasing` prototype, B opens and closes the unit purchase menu from anywhere on the battlefield; village proximity is not required.
+- Reason: Keep the first purchasing prototype easy to access and test while exploring.
+- Consequence: Implement in the shared battlefield scene. Economy values are settled in D010, automatic spawning in D011, and menu input/pause behavior in D012.
+
+## D010 — Start with a fixed budget and one paid soldier
+
+- Date: 2026-10-26
+- Status: Accepted — user direction
+- Decision: Each team starts with 100 gold. One Basic Soldier costs 25 gold. There is no income in the first prototype; restarting Play Mode resets the balances.
+- Reason: Four affordable purchases make spending and insufficient-gold feedback easy to test before adding income buildings.
+- Consequence: Keep starting gold and soldier cost Inspector-editable. Verify team balance isolation, exact-cost purchases, repeated purchases, and rejection without negative balances. These values are prototype tuning, not final balance.
+
+## D011 — Purchases supplement automatic spawning for the player's team
+
+- Date: 2026-10-26
+- Status: Accepted — user direction
+- Decision: Both teams continue spawning soldiers automatically. The player can spend gold to spawn additional soldiers for their own selected team at that team's existing spawn point.
+- Reason: Preserve the ongoing AI battle while testing purchases as extra reinforcements.
+- Consequence: Keep existing automatic spawn intervals and behavior. Automatic spawns remain free and do not deduct from either team's purchase budget; paid purchases must not reset or delay the automatic spawn timer. The purchase menu does not permit buying for the opposing team.
+
+## D012 — Shopping pauses player controls while the battle continues
+
+- Date: 2026-10-26
+- Status: Accepted — user direction
+- Decision: Opening the purchase menu releases the cursor and stops player movement and camera look. The battle, including automatic spawning, movement, and combat, continues running. Closing the menu returns control to the character.
+- Reason: Let the player click purchase buttons without moving or rotating the camera, while preserving the ongoing battlefield.
+- Consequence: Do not pause game time when shopping. Coordinate cursor and control ownership with the existing exploration mode, cursor-release behavior, and camera switching.
+
+## D013 — Keep purchases in a separate prefab on the shared battlefield
+
+- Date: 2026-10-26
+- Status: Implemented and verified on macOS
+- Decision: Add a project-owned `UnitPurchasing` prefab instance to the existing prototype scene. Its scene overrides reference exploration, both existing spawners, and both villages. Use a small IMGUI menu and a pure `GoldWallet` class with focused Edit Mode tests.
+- Reason: Preserve shared battlefield updates and keep the first economy step easy to inspect and tune without duplicating the scene or changing vendor assets.
+- Consequence: Scene references belong to the instance; starting gold and cost live on the prefab. The automatic spawn loop is unchanged. Paid spawns validate team, village, prefab, and navigable spawn placement before charging. Menu inputs coordinate with exploration. D009-D012 passed the recorded local checks; Windows and builds remain unverified.
+
 ## Open decisions
 
 - Final player-control style and shared-device/local versus online multiplayer; third-person exploration is a provisional local prototype.

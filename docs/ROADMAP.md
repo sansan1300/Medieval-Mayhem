@@ -36,6 +36,8 @@ Use focused health-rule tests when practical; navigation, prefab assignments, an
 
 ## 2. One gold counter and one paid unit
 
+Status, 2026-10-26: the fixed-budget purchase prototype is implemented and verified on macOS in the shared battlefield. See [controls, setup, and evidence](UNIT_PURCHASING.md). Each team has 100 gold, Basic Soldiers cost 25, B opens the shop, and purchases supplement both teams' existing free automatic spawning. Nine Edit Mode gold cases and 49 Play Mode checks passed; manual button/restart checks also passed. Income and match-end behavior remain separate milestones. This user-authorized parallel prototype does not complete milestone 1.
+
 Start with one unit type and explicit per-village ownership. Buying deducts the correct cost and spawns one unit; insufficient gold leaves the balance unchanged and gives understandable feedback. Verify both sides, exact-cost purchase, repeated purchase, and rejection without negative balances.
 
 ## 3. One income building and one upgrade

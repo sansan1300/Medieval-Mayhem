@@ -1,6 +1,6 @@
 # Medieval Mayhem — project context
 
-Source inspection and Play Mode verification: 2026-10-25. The recovered tutorial baseline spawns, moves, and fights in the tested macOS editor; future milestones are not implemented or verified by that result.
+Source inspection and Play Mode verification: 2026-10-26. The recovered tutorial baseline spawns, moves, and fights in the tested macOS editor; future milestones are not implemented or verified by that result.
 
 ## Game and collaborators
 
@@ -16,7 +16,7 @@ Third-person exploration is now a tested local prototype on `world-exploration`;
 | URP 17.4.0 | `Packages/manifest.json`; Graphics settings reference `Assets/Settings/PC_RPAsset.asset` |
 | AI Navigation 2.0.12 | `Packages/manifest.json` |
 | Input System 1.19.0; Cinemachine 3.1.6 | `Packages/manifest.json` |
-| Unity Test Framework 1.6.0 | `Packages/manifest.json`; no project-owned test suite found under `Assets/` |
+| Unity Test Framework 1.6.0 | `Packages/manifest.json`; nine gold-rule Edit Mode cases under `Assets/Tests/EditMode/` |
 | Starter Assets ThirdPerson / URP content present | `Assets/StarterAssets/ThirdPersonController/`, `Environment/`, `InputSystem/`, `Mobile/` |
 
 ## What is actually in this checkout
@@ -97,3 +97,11 @@ Rebased `world-exploration` onto main `04d0e53`, which includes village health/d
 ## Combined exploration/village verification — 2026-10-25
 
 In Unity 6000.4.6f1 on macOS, a 38-second smoke run confirmed both teams' exploration spawns/movement, AI spawning/unit damage, NavMesh placement, and active-camera health-bar switching. Neither village lost health in that balanced battle. A subsequent 46-second run passed 16 checks, including separate unobstructed attacks by each team's soldier after temporarily stopping spawners/removing defenders in Play Mode. Each soldier reached and damaged the opposing village within 12 seconds. No runtime warnings/errors were captured, and stopping Play Mode restored zero soldiers and the saved scene. Temporary test assets were removed. `WorldHealthBar` now reacquires the active camera when its previous camera is inactive, including its Canvas camera reference. See [the integration notes](WORLD_EXPLORATION.md#combined-integration-check--2026-10-25). Full village-destruction/match-end acceptance and Windows/build checks remain open.
+
+## Unit purchasing verification — 2026-10-26
+
+On `unit-purchasing`, based on main `900f365`, the shared prototype now has a `UnitPurchasing` prefab instance with `UnitPurchaseMenu`. B opens the shop anywhere; each team starts with 100 gold and buys its own Basic Soldier for 25 at its existing spawn point. Both teams retain free automatic spawning with unchanged timers. Shopping releases the cursor and blocks character movement/look while the battle continues. Restarting Play Mode resets both budgets. There is no income or persistence.
+
+Unity 6000.4.6f1 on macOS compiled the change and passed all nine gold-rule Edit Mode cases. A temporary Play Mode probe passed 49 checks over 32.3 simulated seconds, covering both teams' paid spawns, navigation/objectives, balance isolation, exact-cost spending, rejection without charging, automatic timers, input blocking/restoration, camera switching, ongoing automatic spawning and unit combat. It captured zero runtime warnings/errors. A separate manual run verified the visible Buy and Close buttons, 100-to-75 gold spending, continued shop cursor ownership, and restart resetting both budgets to 100. Additional runtime probes confirmed destroyed own/opposing villages reject purchases without charge. Inspector references were checked; Console remained clear and Play Mode was stopped. Temporary authoring/verification scripts were removed, keeping the reusable wallet tests.
+
+See [setup, controls, and repeatable acceptance checks](UNIT_PURCHASING.md). This verifies the local purchase prototype; Windows, builds, networking, income, and full match-end behavior remain untested or outside this change. The pre-existing missing shared material remains unresolved.
