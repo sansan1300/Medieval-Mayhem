@@ -70,6 +70,14 @@ Append significant decisions as the project evolves. Include date, status, reaso
 - Reason: Exploration deactivates the original camera; retaining that camera would orient bars toward a view the player is no longer using.
 - Consequence: Existing bars follow both camera modes without changing health, combat, or targeting rules. Verified in the combined Play Mode checks.
 
+## D009 â€” End the prototype match when a village falls
+
+- Date: 2026-10-25
+- Status: Implemented in source; pending Unity verification
+- Decision: Show the opposing player as the winner when a village reaches zero health, stop AI soldiers and spawners, and offer a Restart button that reloads the prototype scene.
+- Reason: A clear round ending makes village attacks meaningful and provides a simple way to play again.
+- Consequence: The prototype scene must be enabled in Build Settings. Victory UI and restart behavior still require Play Mode verification.
+
 ## Open decisions
 
 - Final player-control style and shared-device/local versus online multiplayer; third-person exploration is a provisional local prototype.

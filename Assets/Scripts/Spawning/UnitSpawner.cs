@@ -12,8 +12,15 @@ public class UnitSpawner : MonoBehaviour
 
     private float timer;
 
+    private bool stopped;
+
     void Update()
     {
+        if (stopped || VictorySystem.IsGameOver)
+        {
+            return;
+        }
+
         timer += Time.deltaTime;
 
         if (timer >= spawnInterval)
@@ -35,5 +42,10 @@ public class UnitSpawner : MonoBehaviour
         UnitController controller = unit.GetComponent<UnitController>();
 
         controller.target = target;
+    }
+
+    public void StopForVictory()
+    {
+        stopped = true;
     }
 }
